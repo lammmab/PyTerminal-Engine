@@ -5,6 +5,7 @@ from pyterminal import PyTerminal
 class Game:
     """A simple demo game that animates a name in the terminal."""
     def __init__(self):
+        """Initialize the game variables."""
         self.engine = PyTerminal(init_func=self.init, end_func=self.end)
         self.index = 0
         self.forward = True
@@ -13,7 +14,7 @@ class Game:
         self.anim_name = ""
 
     def init(self, engine):
-        """Initialize the game and ask for the player name."""
+        """Initialize the engine / game and ask for the player name."""
         self.name = engine.get_input("What is your name?: ", color="blue")
 
     def update(self, _delta):

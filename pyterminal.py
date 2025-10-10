@@ -1,5 +1,6 @@
 # pylint: disable=too-many-instance-attributes
 # pylint: disable=not-callable
+# pylint: disable=multiple-statements
 
 """
 PyTerminal -
@@ -97,9 +98,11 @@ class PyTerminal:
         self.full_frame = []
 
     def harsh_flush(self):
+        """Clear the entire screen."""
         os.system('cls' if os.name == 'nt' else 'clear')
 
     def draw(self, text, color=None):
+        """Draw to the screen with an optional color."""
         color_code = get_color(color)
         lines = text.split('\n')
 
@@ -107,16 +110,19 @@ class PyTerminal:
             self.full_frame.append(f"{color_code}{line}{Style.RESET_ALL}")
 
     def get_input(self, prompt, color=None):
+        """Get input (blocks the main thread)"""
         color_code = get_color(color)
         return input(f"{color_code}{prompt}{Style.RESET_ALL}")
 
     def non_blocking_input(self, prompt):
+        """Start capturing input (doesn't block main thread)"""
         if not self.capturing_input:
             self.input_buffer = []
             self.capturing_input = True
             self.input_prompt = prompt
 
     def cut_input(self):
+        """Cut input immediately"""
         if self.capturing_input:
             self.capturing_input = False
             self.input_prompt = ""
@@ -126,6 +132,7 @@ class PyTerminal:
     # on enter: finish the text
     # pretty intuitive stuff
     def get_inputs(self):
+        """Capture inputs based on readchar"""
         while self.running:
             try:
                 if not self.capturing_input:
@@ -155,10 +162,12 @@ class PyTerminal:
                 self.harsh_quit()
 
     def warn(self, message, duration=1):
+        """Create a timed warning message"""
         self.current_warning = message
         self.warning_time_left = duration
 
     def run_loop(self, update_func, draw_func, fps=30):
+        """Run the main loop"""
         self.harsh_flush()
         self.running = True
         frame_duration = 1 / fps
@@ -186,15 +195,17 @@ class PyTerminal:
                 self.harsh_quit()
 
     def harsh_quit(self):
+        """Terminate the session with no ending message"""
         self.harsh_flush()
         print("Terminated", end="\n")
         self.quit()
 
     def quit(self):
+        """Quit the session with an ending message."""
         self.running = False
 
         if callable(self.end_func):
-            self.end_func() 
+            self.end_func()
 
         self.harsh_flush()
 
