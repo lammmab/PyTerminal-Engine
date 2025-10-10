@@ -7,18 +7,18 @@ A little game engine I made in Python for my cs50p final project
 
 ## Installation:
 1. Clone the repo:
-```bash
+```cmd
 git clone https://github.com/lammmab/PyTerminal-Engine.git
 cd PyTerminal-Engine
 ```
 2. Install dependencies:
-```bash
+```cmd
 pip install -r requirements.txt
 ```
 
 ## Usage:
 * Run example.py and view to see how it works:
-```bash
+```cmd
 python example.py
 ```
 * Check out pyterminal.py for internals
