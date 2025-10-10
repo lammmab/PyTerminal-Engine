@@ -11,7 +11,7 @@ class Game:
     def init(self, engine):
         self.name = engine.get_input("What is your name?: ", color="blue")
 
-    def update(self, delta):
+    def update(self, _delta):
         if self.forward:
             self.index += 1
             if self.index >= len(self.name):

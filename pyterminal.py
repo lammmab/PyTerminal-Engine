@@ -143,9 +143,6 @@ class PyTerminal:
             except KeyboardInterrupt:
                 self.harsh_quit()
 
-            except Exception:
-                self.quit()
-
     def warn(self, message, time=1):
         self.current_warning = message
         self.warning_time_left = time
@@ -185,7 +182,7 @@ class PyTerminal:
     def quit(self):
         self.running = False
 
-        if self.end_func:
+        if callable(self.end_func):
             self.end_func()
 
         self.harsh_flush()
