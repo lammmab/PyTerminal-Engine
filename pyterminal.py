@@ -26,6 +26,7 @@ from colorama import Fore, Style, init
 
 
 def get_color(color):
+    """Helper to get color from colorama"""
     return getattr(Fore, color.upper(), '') if color else ''
 
 
