@@ -1,4 +1,6 @@
 # pylint: disable=too-many-instance-attributes
+# pylint: disable=not-callable
+
 """
 PyTerminal -
 because why use a real game engine?
@@ -14,11 +16,12 @@ Made by lammmab for cs50p final project
 """
 
 import os
-from colorama import Fore, Style, init
 import time
+from threading import Thread
+
 import event_emitter as events
 from readchar import readkey, key
-from threading import Thread
+from colorama import Fore, Style, init
 
 
 def get_color(color):
@@ -151,9 +154,9 @@ class PyTerminal:
             except KeyboardInterrupt:
                 self.harsh_quit()
 
-    def warn(self, message, time=1):
+    def warn(self, message, duration=1):
         self.current_warning = message
-        self.warning_time_left = time
+        self.warning_time_left = duration
 
     def run_loop(self, update_func, draw_func, fps=30):
         self.harsh_flush()
@@ -191,7 +194,7 @@ class PyTerminal:
         self.running = False
 
         if callable(self.end_func):
-            self.end_func()
+            self.end_func() 
 
         self.harsh_flush()
 
