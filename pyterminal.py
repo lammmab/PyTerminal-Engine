@@ -16,11 +16,13 @@ import os
 from colorama import Fore, Style, init
 import time
 import event_emitter as events
-from readchar import readkey,key
+from readchar import readkey, key
 from threading import Thread
+
 
 def get_color(color):
     return getattr(Fore, color.upper(), '') if color else ''
+
 
 class PyTerminal:
     """
@@ -31,7 +33,8 @@ class PyTerminal:
         - Captures input with readchar, input buffer, and prompt
         - Handles ctrl + c to end session
     """
-    def __init__(self,init_func=None,end_func=None):
+
+    def __init__(self, init_func=None, end_func=None):
         init()
 
         self.last_lines = []
@@ -51,7 +54,8 @@ class PyTerminal:
 
         self.last_input = ""
         self.harsh_flush()
-        if init_func: init_func(self)
+        if init_func:
+            init_func(self)
 
     def flush_frame(self):
         max_lines = max(len(self.full_frame), len(self.last_lines))
@@ -66,17 +70,17 @@ class PyTerminal:
                 # \033[K erases everything after the cursor to the end of the line
                 # end='\n' goes to the next line
                 end = ''
-                if not i == max_lines-1:
+                if not i == max_lines - 1:
                     end = '\n'
                 else:
                     end = ''
 
-                print(f"\033[{i+1};0H{new}\033[K", end=end)
+                print(f"\033[{i + 1};0H{new}\033[K", end=end)
 
         # move to end of last line
         last_line = len(self.last_lines)
         input_length = len(self.input_prompt + ''.join(self.input_buffer))
-        print(f"\033[{last_line};{input_length+1}H", end='', flush=True)
+        print(f"\033[{last_line};{input_length + 1}H", end='', flush=True)
 
         self.last_lines = self.full_frame.copy()
         self.full_frame = []
@@ -84,18 +88,18 @@ class PyTerminal:
     def harsh_flush(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
-    def draw(self,text,color=None):
+    def draw(self, text, color=None):
         color_code = get_color(color)
         lines = text.split('\n')
 
         for line in lines:
             self.full_frame.append(f"{color_code}{line}{Style.RESET_ALL}")
 
-    def get_input(self,prompt,color=None):
+    def get_input(self, prompt, color=None):
         color_code = get_color(color)
         return input(f"{color_code}{prompt}{Style.RESET_ALL}")
 
-    def non_blocking_input(self,prompt):
+    def non_blocking_input(self, prompt):
         if not self.capturing_input:
             self.input_buffer = []
             self.capturing_input = True
@@ -131,7 +135,8 @@ class PyTerminal:
                     self.input_prompt = ""
 
                     self.input_buffer = []
-                    self.events.emit('keyboardEvent',card_input=self.last_input)
+                    self.events.emit(
+                        'keyboardEvent', card_input=self.last_input)
                 elif len(k) == 1:
                     self.input_buffer.append(k)
 
@@ -141,12 +146,11 @@ class PyTerminal:
             except Exception:
                 self.quit()
 
-
-    def warn(self,message,time=1):
+    def warn(self, message, time=1):
         self.current_warning = message
         self.warning_time_left = time
 
-    def run_loop(self,update_func,draw_func,fps=30):
+    def run_loop(self, update_func, draw_func, fps=30):
         self.harsh_flush()
         self.running = True
         frame_duration = 1 / fps
@@ -162,7 +166,7 @@ class PyTerminal:
                 update_func(delta)
                 draw_func(delta)
                 if self.warning_time_left > 0:
-                    self.draw(self.current_warning,color="RED")
+                    self.draw(self.current_warning, color="RED")
                     self.warning_time_left -= delta
 
                 self.draw(self.input_prompt + ''.join(self.input_buffer))
