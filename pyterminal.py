@@ -1,3 +1,4 @@
+# pylint: disable=too-many-instance-attributes
 """
 PyTerminal -
 because why use a real game engine?
@@ -52,15 +53,18 @@ class PyTerminal:
         self.capturing_input = False
         self.input_prompt = ""
         self.input_buffer = []
+        self.input_loop = None
 
-        self.end_func = end_func if end_func else None
+        self.end_func = end_func if callable(end_func) else None
 
         self.last_input = ""
         self.harsh_flush()
-        if init_func:
+        if callable(init_func):
             init_func(self)
 
     def flush_frame(self):
+        """Update the lines that have changed in the terminal frame using diffs."""
+
         max_lines = max(len(self.full_frame), len(self.last_lines))
         for i in range(max_lines):
             new = self.full_frame[i] if i < len(self.full_frame) else ''
@@ -164,8 +168,8 @@ class PyTerminal:
                 current_time = time.time()
                 delta = current_time - self.last_time
                 time.sleep(max(0, frame_duration - delta))
-                update_func(delta)
-                draw_func(delta)
+                if callable(update_func): update_func(delta)
+                if callable(draw_func): draw_func(delta)
                 if self.warning_time_left > 0:
                     self.draw(self.current_warning, color="RED")
                     self.warning_time_left -= delta
