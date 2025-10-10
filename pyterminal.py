@@ -31,7 +31,7 @@ class PyTerminal:
         - Captures input with readchar, input buffer, and prompt
         - Handles ctrl + c to end session
     """
-    def __init__(self,init_func=None):
+    def __init__(self,init_func=None,end_func=None):
         init()
 
         self.last_lines = []
@@ -46,6 +46,8 @@ class PyTerminal:
         self.capturing_input = False
         self.input_prompt = ""
         self.input_buffer = []
+
+        self.end_func = end_func if end_func else None
 
         self.last_input = ""
         self.harsh_flush()
@@ -158,20 +160,18 @@ class PyTerminal:
                 delta = current_time - self.last_time
                 time.sleep(max(0, frame_duration - delta))
                 update_func(delta)
-                draw_func()
+                draw_func(delta)
                 if self.warning_time_left > 0:
                     self.draw(self.current_warning,color="RED")
                     self.warning_time_left -= delta
 
                 self.draw(self.input_prompt + ''.join(self.input_buffer))
 
-                self.flush_frame()
+                if self.running:
+                    self.flush_frame()
                 self.last_time = current_time
             except KeyboardInterrupt:
                 self.harsh_quit()
-
-            except Exception:
-                self.quit()
 
     def harsh_quit(self):
         self.harsh_flush()
@@ -180,3 +180,11 @@ class PyTerminal:
 
     def quit(self):
         self.running = False
+
+        if self.end_func:
+            self.end_func()
+
+        self.harsh_flush()
+
+        for frame in self.full_frame:
+            print(frame)
