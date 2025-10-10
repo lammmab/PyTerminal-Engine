@@ -28,8 +28,11 @@ class PyTerminal:
     """
        PyTerminal entry point:
         - Builds input frame
-        - Runs at specified fps (terminal.run_loop(update,draw,fps=fps)) (i went with 30 bc it works at 30 and why not)
-        - Built in event emitter (mainly for connecting to the keyboard event, but can be used for custom events depending on use-case)
+        - Runs at specified fps (terminal.run_loop(update,draw,fps=fps)) 
+        (i went with 30 bc it works at 30 and why not)
+        - Built in event emitter 
+        (mainly for connecting to the keyboard event, but can be used for custom events depending
+                                                                     on use-case)
         - Captures input with readchar, input buffer, and prompt
         - Handles ctrl + c to end session
     """
@@ -65,7 +68,8 @@ class PyTerminal:
             if new != old:
                 # how this ascii stuff works:
                 # \033[] starts the control sequence
-                # {i+1};0H positions the cursor at the row/column start (i is row, 0H is the column)
+                # {i+1};0H positions the cursor at the row/column start
+                #                          (i is row, 0H is the column)
                 # {new} is the diffed text (from new, old)
                 # \033[K erases everything after the cursor to the end of the line
                 # end='\n' goes to the next line
