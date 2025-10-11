@@ -24,11 +24,6 @@ import event_emitter as events
 from readchar import readkey, key
 from colors import parse_colors
 
-def get_color(color):
-    """Helper to get color from colorama"""
-    return getattr(Fore, color.upper(), '') if color else ''
-
-
 class PyTerminal:
     """
        PyTerminal entry point:
