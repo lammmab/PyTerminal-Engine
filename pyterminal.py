@@ -22,8 +22,7 @@ from threading import Thread
 
 import event_emitter as events
 from readchar import readkey, key
-from colorama import Fore, Style, init
-
+from colors import parse_colors
 
 def get_color(color):
     """Helper to get color from colorama"""
@@ -44,8 +43,6 @@ class PyTerminal:
     """
 
     def __init__(self, init_func=None, end_func=None):
-        init()
-
         self.last_lines = []
         self.full_frame = []
 
@@ -102,18 +99,17 @@ class PyTerminal:
         """Clear the entire screen."""
         os.system('cls' if os.name == 'nt' else 'clear')
 
-    def draw(self, text, color=None):
-        """Draw to the screen with an optional color."""
-        color_code = get_color(color)
+    def draw(self, text):
+        """Draw to the screen with colors (check colors.py)."""
         lines = text.split('\n')
 
         for line in lines:
-            self.full_frame.append(f"{color_code}{line}{Style.RESET_ALL}")
+            self.full_frame.append(parse_colors(line))
 
-    def get_input(self, prompt, color=None):
+    def get_input(self, prompt):
         """Get input (blocks the main thread)"""
-        color_code = get_color(color)
-        return input(f"{color_code}{prompt}{Style.RESET_ALL}")
+        result = input(parse_colors(prompt))
+        return result
 
     def non_blocking_input(self, prompt):
         """Start capturing input (doesn't block main thread)"""
@@ -203,12 +199,13 @@ class PyTerminal:
 
     def quit(self):
         """Quit the session with an ending message."""
-        self.running = False
+        if self.running:
+            self.running = False
 
-        if callable(self.end_func):
-            self.end_func()
+            if callable(self.end_func):
+                self.end_func()
 
-        self.harsh_flush()
+            self.harsh_flush()
 
-        for frame in self.full_frame:
-            print(frame)
+            for frame in self.full_frame:
+                print(frame)
