@@ -28,9 +28,9 @@ class PyTerminal:
     """
        PyTerminal entry point:
         - Builds input frame
-        - Runs at specified fps (terminal.run_loop(update,draw,fps=fps)) 
+        - Runs at specified fps (terminal.run_loop(update,draw,fps=fps))
         (i went with 30 bc it works at 30 and why not)
-        - Built in event emitter 
+        - Built in event emitter
         (mainly for connecting to the keyboard event, but can be used for custom events depending
                                                                      on use-case)
         - Captures input with readchar, input buffer, and prompt
@@ -54,12 +54,26 @@ class PyTerminal:
 
         self.end_func = end_func if callable(end_func) else None
 
+        self.was_too_small = False
+
         self.last_input = ""
         self.harsh_flush()
         if callable(init_func):
             init_func(self)
 
     def flush_frame(self):
+        lines_required = len(self.full_frame)
+        _,lines_available = os.get_terminal_size()
+        if lines_available < lines_required:
+            if not self.was_too_small:
+                self.harsh_flush()
+                self.was_too_small = True
+            self.full_frame = [parse_colors("/cRANDYour terminal is too small!")]
+        else:
+            if self.was_too_small:
+                self.was_too_small = False
+                self.harsh_flush()
+
         """Update the lines that have changed in the terminal frame using diffs."""
 
         max_lines = max(len(self.full_frame), len(self.last_lines))
@@ -175,7 +189,7 @@ class PyTerminal:
                 if callable(update_func): update_func(delta)
                 if callable(draw_func): draw_func(delta)
                 if self.warning_time_left > 0:
-                    self.draw(self.current_warning, color="RED")
+                    self.draw("/cRED"+self.current_warning)
                     self.warning_time_left -= delta
 
                 self.draw(self.input_prompt + ''.join(self.input_buffer))
