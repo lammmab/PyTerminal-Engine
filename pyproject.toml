@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyterminal"
+version = "0.1.0"
+description = "PyTerminal Game Engine - Make Text Based Games"
+authors = [{name = "Lammmab"}]
+dependencies = ["PyEventEmitter","readchar","colorama"]
+
+[tool.setuptools.packages.find]
+where = ["."]
